@@ -1,12 +1,31 @@
 import cv2 as cv
+import datetime
 
 #find out if we "reached" next second by analysing the clock display changes
 # fgbg = cv.bgsegm.createBackgroundSubtractorMOG()
 # using absolute difference
 
-fname='./input/TEST-23Mar-2021-145440.avi'
+#manual settings of each video yanked from readflowIMG program
 
-ctime = datetime.datetime(2021,3,23,14,54,40)
+# ctime = datetime.datetime(2021,3,23,14,54,40)
+# fname='./input/TEST-23Mar-2021-145440.avi'
+# setname = '145440'
+# dx, dy, ds = 592, 230, 5
+# degrot=1
+
+ctime = datetime.datetime(2021,3,23,15,24,40)
+fname='./input/TEST-23Mar-2021-152440.avi'
+setname = '152440'
+sx, sy = 45, 70
+dx, dy, ds = 515, 300, 3
+degrot=3
+
+
+
+clock_loc = [12,22,115,167]
+dig1 = [dy,dy+sy,dx,dx+sx]
+dig2 = [dy,dy+sy,dx+sx,dx+2*sx]
+
 
 cap = cv.VideoCapture(fname)
 
@@ -31,7 +50,6 @@ while (cap.isOpened()):
 
     # frame = cv.imread('frame.png')
     #get clock
-    clock_loc = [12,22,115,167]
     frame_clock = frame[clock_loc[0]:clock_loc[1],clock_loc[2]:clock_loc[3]].copy()
     no_pixels = frame_clock.shape[0] * frame_clock.shape[1]
     clock_gray = cv.cvtColor(frame_clock, cv.COLOR_BGR2GRAY)
@@ -49,12 +67,9 @@ while (cap.isOpened()):
     # cover_str = "{0:.2f}".format(coverage)
     #rotate to get flow digits nice
     (cX, cY) = (w // 2, h // 2)
-    M = cv.getRotationMatrix2D((cX, cY), 1, 1.0)
+    M = cv.getRotationMatrix2D((cX, cY), degrot, 1.0)
     rotated = cv.warpAffine(frame, M, (w, h))
 
-    flow_loc = [234,303,590,684]
-    dig1 = [233,297,595,635]
-    dig2 = [230,295,636,677]
 
     frame_flow = rotated[flow_loc[0]:flow_loc[1],flow_loc[2]:flow_loc[3]]
     frame_dig1 = rotated[dig1[0]:dig1[1],dig1[2]:dig1[3]]
@@ -65,23 +80,21 @@ while (cap.isOpened()):
     #x:677,y:295
 
     cv.namedWindow('current_frame')
-    cv.namedWindow('current_flow')
     cv.namedWindow('current_dig1')
     cv.namedWindow('current_dig2')
     cv.namedWindow('current_clock')
 
-    cv.setMouseCallback("current_frame", onmouse, param = None)
     cv.imshow('current_frame',rotated)
     cv.imshow('current_clock',frame_clock)
     cv.imshow('current_dig1',frame_dig1)
     cv.imshow('current_dig2',frame_dig2)
 
-    cv.imwrite(f'./output/dig{n}.png',frame_dig1)
+    cv.imwrite(f'./output/{setname}dig1_{n}.png',frame_dig1)
     n = n+1
-    cv.imwrite(f'./output/dig{n}.png',frame_dig2)
+    cv.imwrite(f'./output/{setname}dig2_{n}.png',frame_dig2)
     n = n+1
 
-    key = cv.waitKey(0)
+    key = cv.waitKey(40)
     if key == ord('q'):
         print("quit")
         break
