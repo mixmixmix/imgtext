@@ -53,6 +53,8 @@ cv.imshow('current_clock',frame_clock)
 cv.imshow('current_dig1',frame_dig1)
 cv.imshow('current_dig2',frame_dig2)
 
+result = cv.matchTemplate(frame_dig1, frame_dig2, cv.TM_SQDIFF)
+print(result)
 cv.imwrite(f'dig1.png',frame_dig1)
 cv.imwrite(f'dig2.png',frame_dig2)
 n = n+1
