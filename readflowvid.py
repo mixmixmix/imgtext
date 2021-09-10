@@ -42,17 +42,17 @@ d1_0 = cv.imread(f'{dd}d1_0.png')
 d1_1 = cv.imread(f'{dd}d1_1.png')
 d2_0 = cv.imread(f'{dd}d2_0.png')
 d2_1 = cv.imread(f'{dd}d2_1.png')
-d2_2 = cv.imread(f'{dd}d2_2.png')
+# d2_2 = cv.imread(f'{dd}d2_2.png')
 d2_3 = cv.imread(f'{dd}d2_3.png')
 d2_4 = cv.imread(f'{dd}d2_4.png')
-d2_5 = cv.imread(f'{dd}d2_5.png')
+# d2_5 = cv.imread(f'{dd}d2_5.png')
 d2_6 = cv.imread(f'{dd}d2_6.png')
 d2_7 = cv.imread(f'{dd}d2_7.png')
 d2_8 = cv.imread(f'{dd}d2_8.png')
-d2_9 = cv.imread(f'{dd}d2_9.png')
+# d2_9 = cv.imread(f'{dd}d2_9.png')
 
 d1_t = [d1_0,d1_1]
-d2_t = [d2_0, d2_1,d2_3,d2_4,d2_6,d2_7]
+d2_t = [d2_0, d2_1,d2_3,d2_4,d2_6,d2_7,d2_8]
 
 
 with open(outputfilename, 'a') as f:
@@ -124,7 +124,21 @@ while (cap.isOpened()):
     for dt in d2_t:
         result = mkMatchTemplate(frame_dig2, dt)
         res2.append(result)
-    flow_v = 10 * np.argmin(np.array(res1)) + np.argmin(np.array(res2))
+
+    #tmp HACK some numbers do not display:
+    di = np.argmin(np.array(res2))
+    if di == 6:
+        di = 8
+    if di == 5:
+        di = 7
+    if id == 4:
+        di = 6
+    if di == 3:
+        di = 4
+    if di == 2:
+        di = 3
+
+    flow_v = 10 * np.argmin(np.array(res1)) + di
 
     with open(outputfilename, 'a') as f:
         f.write( ctime.strftime("%Y-%m-%d %H:%M:%S") + ',' + str(flow_v) + '\n')
@@ -139,9 +153,9 @@ while (cap.isOpened()):
     # cv.imshow('current_dig1',frame_dig1)
     # cv.imshow('current_dig2',frame_dig2)
 
-    cv.imwrite(f'./output/{setname}dig1_{n}.png',frame_dig1)
+    #cv.imwrite(f'./output/{setname}dig1_{n}.png',frame_dig1)
     n = n+1
-    cv.imwrite(f'./output/{setname}dig2_{n}.png',frame_dig2)
+    #cv.imwrite(f'./output/{setname}dig2_{n}.png',frame_dig2)
     n = n+1
 
     key = cv.waitKey(2)
