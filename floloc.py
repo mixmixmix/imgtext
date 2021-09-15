@@ -1,45 +1,81 @@
 import cv2 as cv
+import numpy as np
+import glob
+
+point_name = ""
+mode_arrange = True
+pa = (0,0)
+pb = (0,0)
+dx=0
+dy=0
+f_loc_x = 0
+f_loc_y = 0
+M = np.zeros([2,3])
 
 def onmouse(event, x, y, flags, param):
-    if(event == cv.EVENT_LBUTTONDOWN):
-        print(f'x:{x},y:{y}')
+    global pa, pb, dx, dy, point_name, f_loc_x, f_loc_y, M, outputfilename
 
-frame = cv.imread('input/fmeter_locs/a.png')
-# frame = cv.imread('test.png')
+    if mode_arrange:
+        if(event == cv.EVENT_LBUTTONDOWN):
+            pa = (x,y)
+            dx = pb[0]-pa[0]
+            dy = pb[1]-pa[1]
+            print(f'pa is {pa}')
+        if(event == cv.EVENT_RBUTTONDOWN):
+            pb = (x,y)
+            dx = pb[0]-pa[0]
+            dy = pb[1]-pa[1]
+            print(f'pb is {pb}')
+    else:
+        if(event == cv.EVENT_LBUTTONDOWN):
 
-cv.namedWindow('current_frame', cv.WINDOW_GUI_EXPANDED)
-(h, w) = frame.shape[:2]
-(cX, cY) = (w // 2, h // 2)
+            pap = np.dot(M,[pa[0],pa[1],1])
+            pbp = np.dot(M,[pb[0],pb[1],1])
+            dxp = pbp[0] - pap[0]
+            dyp = pbp[1] - pap[1]
 
-cv.setMouseCallback("current_frame", onmouse, param = None)
-cv.imshow('current_frame',frame)
-k = cv.waitKey(0)
-cv.destroyAllWindows()
+            fw = np.sqrt(dxp**2 +  dyp**2)
 
-#pa x:534,y:194
-#pb x:539,y:637
-#pa = x:488,y:237
-#pb = x:641,y:657
-dx = 5
-dy = 637 - 194
-#alpha = -beta
-#tg(alpha) = dx/dy
-degrot = - np.degrees(np.arctan2(dx,dy))
+            f_loc_x = (x - pap[0]) / fw
+            f_loc_y = (y - pap[1]) / fw
 
-M = cv.getRotationMatrix2D((cX, cY), degrot, 1.0)
-rotated = cv.warpAffine(frame, M, (w, h))
+            print(f'{point_name}, {f_loc_x},{f_loc_y}')
 
-cv.namedWindow('current_frame')
-cv.setMouseCallback("current_frame", onmouse, param = None)
-cv.imshow('current_frame',rotated)
 
-#pa, pb, fl
-# x:534,y:192
-#x:535,y:636
-#x:1131,y:371
-flume_width = 636-192
-f_loc_x = (1131-535)/flume_width
-f_loc_y = (371-192)/flume_width
+outputfilename = './output/152440_locs.csv'
 
-k = cv.waitKey(0)
-cv.destroyAllWindows()
+with open(outputfilename, 'a') as f:
+    f.write('loc_name,loc_x,loc_y,\n')
+
+
+files = glob.glob('input/fmeter_locs/*png')
+for fname in files:
+    frame = cv.imread(fname)
+    # frame = cv.imread('test.png')
+    point_name = fname.split('/')[-1].split('.')[0]
+
+    cv.namedWindow('current_frame', cv.WINDOW_GUI_EXPANDED)
+    (h, w) = frame.shape[:2]
+    (cX, cY) = (w // 2, h // 2)
+
+    cv.setMouseCallback("current_frame", onmouse, param = None)
+    cv.imshow('current_frame',frame)
+    k = cv.waitKey(0)
+    cv.destroyAllWindows()
+    mode_arrange = False
+    print(f'dx and dy is {dx} and {dy}')
+    degrot = - np.degrees(np.arctan2(dx,dy))
+
+    M = cv.getRotationMatrix2D((cX, cY), degrot, 1.0)
+    rotated = cv.warpAffine(frame, M, (w, h))
+
+    cv.namedWindow('current_frame')
+    cv.setMouseCallback("current_frame", onmouse, param = None)
+    cv.imshow('current_frame',rotated)
+
+
+    k = cv.waitKey(0)
+    cv.destroyAllWindows()
+
+    with open(outputfilename, 'a') as f:
+        f.write(f'{point_name}, {f_loc_x},{f_loc_y}\n')
