@@ -13,11 +13,17 @@ clock_loc = [12,22,115,167]
 # dx, dy, ds = 592, 230, 8 #depending on distance space between numbers differ a bit
 # degrot=1
 
-ds=3
-frame = cv.imread('input/frame152440.png')
-sx, sy = 45, 70
-dx, dy = 512, 300
-degrot=3
+#ds=3
+#frame = cv.imread('input/frame14.png')
+#sx, sy = 45, 70
+#dx, dy = 512, 300
+#degrot=3
+
+ds=1
+frame = cv.imread('input/frame14.png')
+sx, sy = 60, 80
+dx, dy = 471, 376
+degrot=0
 
 dig1 = [dy,dy+sy,dx,dx+sx]
 dig2 = [dy,dy+sy,dx+sx+ds,dx+ds+2*sx]
@@ -51,7 +57,7 @@ cv.setMouseCallback("current_frame", onmouse, param = None)
 cv.imshow('current_frame',rotated)
 cv.imshow('current_clock',frame_clock)
 cv.imshow('current_dig1',frame_dig1)
-cv.imshow('current_dig2',frame_dig2)
+#cv.imshow('current_dig2',frame_dig2)
 
 result = cv.matchTemplate(frame_dig1, frame_dig2, cv.TM_SQDIFF)
 print(result)

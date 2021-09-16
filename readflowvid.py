@@ -28,16 +28,26 @@ def mkMatchTemplate(img1, img2):
 # dx, dy, ds = 592, 230, 5
 # degrot=1
 
-ctime = datetime.datetime(2021,3,23,15,24,40)
-fname='./input/TEST-23Mar-2021-152440.avi'
-setname = '152440'
-sx, sy = 45, 70
-dx, dy, ds = 515, 300, 3
-degrot=3
+#ctime = datetime.datetime(2021,3,23,15,24,40)
+#fname='./input/TEST-23Mar-2021-152440.avi'
+#setname = '152440'
+#sx, sy = 45, 70
+#dx, dy, ds = 515, 300, 3
+#degrot=3
 
-outputfilename = './output/152440out.csv'
+ctime = datetime.datetime(2021,9,14,12,30,37)
+fname='/mnt/three/flowprofile/TEST-14Sep-2021-123037.avi'
+setname = '14sep'
+sx, sy = 60, 80
+dx, dy, ds = 471, 376, 1
+degrot=0
 
-dd = './input/152440/'
+
+
+
+outputfilename = f'./output/{setname}.csv'
+
+dd = f'./input/{setname}/'
 d1_0 = cv.imread(f'{dd}d1_0.png')
 d1_1 = cv.imread(f'{dd}d1_1.png')
 d2_0 = cv.imread(f'{dd}d2_0.png')
@@ -45,15 +55,17 @@ d2_1 = cv.imread(f'{dd}d2_1.png')
 # d2_2 = cv.imread(f'{dd}d2_2.png')
 d2_3 = cv.imread(f'{dd}d2_3.png')
 d2_4 = cv.imread(f'{dd}d2_4.png')
-# d2_5 = cv.imread(f'{dd}d2_5.png')
-d2_6 = cv.imread(f'{dd}d2_6.png')
+d2_5 = cv.imread(f'{dd}d2_5.png')
+# d2_6 = cv.imread(f'{dd}d2_6.png')
 d2_7 = cv.imread(f'{dd}d2_7.png')
 d2_8 = cv.imread(f'{dd}d2_8.png')
 # d2_9 = cv.imread(f'{dd}d2_9.png')
 
 d1_t = [d1_0,d1_1]
-d2_t = [d2_0, d2_1,d2_3,d2_4,d2_6,d2_7,d2_8]
+d2_t = [d2_0, d2_1,d2_3,d2_4,d2_5,d2_7,d2_8]
 
+# d1_t = []
+# d2_t = []
 
 with open(outputfilename, 'a') as f:
     f.write('date,flow_v\n')
@@ -125,14 +137,28 @@ while (cap.isOpened()):
         result = mkMatchTemplate(frame_dig2, dt)
         res2.append(result)
 
+    ### ###
     #tmp HACK some numbers do not display:
     di = np.argmin(np.array(res2))
+
+    #154042
+    # if di == 6:
+    #     di = 8
+    # if di == 5:
+    #     di = 7
+    # if id == 4:
+    #     di = 6
+    # if di == 3:
+    #     di = 4
+    # if di == 2:
+    #     di = 3
+
     if di == 6:
         di = 8
     if di == 5:
         di = 7
     if id == 4:
-        di = 6
+        di = 5
     if di == 3:
         di = 4
     if di == 2:
@@ -142,6 +168,8 @@ while (cap.isOpened()):
 
     with open(outputfilename, 'a') as f:
         f.write( ctime.strftime("%Y-%m-%d %H:%M:%S") + ',' + str(flow_v) + '\n')
+
+    ### ### 
 
     # cv.namedWindow('current_frame')
     # cv.namedWindow('current_dig1')
@@ -153,9 +181,9 @@ while (cap.isOpened()):
     # cv.imshow('current_dig1',frame_dig1)
     # cv.imshow('current_dig2',frame_dig2)
 
-    #cv.imwrite(f'./output/{setname}dig1_{n}.png',frame_dig1)
+    cv.imwrite(f'./output/{setname}/dig1_{n}.png',frame_dig1)
     n = n+1
-    #cv.imwrite(f'./output/{setname}dig2_{n}.png',frame_dig2)
+    cv.imwrite(f'./output/{setname}/dig2_{n}.png',frame_dig2)
     n = n+1
 
     key = cv.waitKey(2)
