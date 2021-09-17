@@ -6,7 +6,11 @@ import numpy as np
 
 
 
-fdir = pd.read_csv('input/152440flow.csv')
+fdir = pd.read_csv('input/flowdirchange21.csv')
+
+fdir['datetime'] = pd.to_datetime(fdir['datetime'])
+fdir = fdir.set_index(['datetime'])
+
 fval = pd.read_csv('input/152440out.csv')
 
 fval['dtime'] = pd.to_datetime(fval['date'])
