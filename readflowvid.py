@@ -35,14 +35,20 @@ def mkMatchTemplate(img1, img2):
 #dx, dy, ds = 515, 300, 3
 #degrot=3
 
-ctime = datetime.datetime(2021,9,14,12,30,37)
-fname='/mnt/three/flowprofile/TEST-14Sep-2021-123037.avi'
-setname = '14sep'
+# ctime = datetime.datetime(2021,9,14,12,30,37)
+# fname='/mnt/three/flowprofile/TEST-14Sep-2021-123037.avi'
+# setname = '14sep'
+# sx, sy = 60, 80
+# dx, dy, ds = 471, 376, 1
+# degrot=0
+
+
+ctime = datetime.datetime(2021,9,14,13,13,36)
+fname='/mnt/three/flowprofile/TEST-14Sep-2021-131336.avi'
+setname = '14sep2'
 sx, sy = 60, 80
-dx, dy, ds = 471, 376, 1
-degrot=0
-
-
+dx, dy, ds = 406, 253, 1
+degrot=1
 
 
 outputfilename = f'./output/{setname}.csv'
@@ -50,19 +56,20 @@ outputfilename = f'./output/{setname}.csv'
 dd = f'./input/{setname}/'
 d1_0 = cv.imread(f'{dd}d1_0.png')
 d1_1 = cv.imread(f'{dd}d1_1.png')
+d1_2 = cv.imread(f'{dd}d1_2.png')
 d2_0 = cv.imread(f'{dd}d2_0.png')
 d2_1 = cv.imread(f'{dd}d2_1.png')
-# d2_2 = cv.imread(f'{dd}d2_2.png')
+d2_2 = cv.imread(f'{dd}d2_2.png')
 d2_3 = cv.imread(f'{dd}d2_3.png')
 d2_4 = cv.imread(f'{dd}d2_4.png')
 d2_5 = cv.imread(f'{dd}d2_5.png')
-# d2_6 = cv.imread(f'{dd}d2_6.png')
+d2_6 = cv.imread(f'{dd}d2_6.png')
 d2_7 = cv.imread(f'{dd}d2_7.png')
 d2_8 = cv.imread(f'{dd}d2_8.png')
-# d2_9 = cv.imread(f'{dd}d2_9.png')
+d2_9 = cv.imread(f'{dd}d2_9.png')
 
-d1_t = [d1_0,d1_1]
-d2_t = [d2_0, d2_1,d2_3,d2_4,d2_5,d2_7,d2_8]
+d1_t = [d1_0,d1_1, d1_2]
+d2_t = [d2_0, d2_1, d2_2, d2_3,d2_4,d2_5,d2_6,d2_7,d2_8,d2_9]
 
 # d1_t = []
 # d2_t = []
@@ -152,17 +159,6 @@ while (cap.isOpened()):
     #     di = 4
     # if di == 2:
     #     di = 3
-
-    if di == 6:
-        di = 8
-    if di == 5:
-        di = 7
-    if id == 4:
-        di = 5
-    if di == 3:
-        di = 4
-    if di == 2:
-        di = 3
 
     flow_v = 10 * np.argmin(np.array(res1)) + di
 
