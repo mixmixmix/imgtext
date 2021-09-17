@@ -7,7 +7,7 @@ import numpy as np
 
 
 fdir = pd.read_csv('input/flowdirchange21.csv')
-
+fdir['chid'] = fdir.index
 fdir['datetime'] = pd.to_datetime(fdir['datetime'])
 fdir['switch_time'] = fdir['datetime']
 fdir = fdir.set_index(['datetime'])
@@ -38,7 +38,8 @@ flocs = flocs.sort_index()
 # 1 a snapshot of flow profile at given point
 # 2 value of the location
 
-fdl = pd.merge_asof(flocs, fdir, left_index=True, right_index=True)
+fdl = pd.merge_asof(flocs, fdir, left_index=True, right_index=True, direction='nearest')
+#this will require manual corrections
 
 
 for ind, val in fdir.iterrows():
