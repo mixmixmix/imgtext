@@ -4,6 +4,10 @@ import numpy as np
 
 
 def mkMatchTemplate(img1, img2):
+    #if shape is different it is for instance when we don't have a template for this digit
+    if img1.shape != img2.shape:
+        return 100
+
     no_pixels = img1.shape[0] * img1.shape[1]
     img1_gray = cv.cvtColor(img1, cv.COLOR_BGR2GRAY)
     img1_bin = cv.threshold(img1_gray, 0, 1, cv.THRESH_BINARY + cv.THRESH_OTSU)[1]
@@ -43,13 +47,62 @@ def mkMatchTemplate(img1, img2):
 # degrot=0
 
 
-ctime = datetime.datetime(2021,9,14,13,13,36)
-fname='/mnt/three/flowprofile/TEST-14Sep-2021-131336.avi'
-setname = '14sep2'
-sx, sy = 60, 80
-dx, dy, ds = 406, 253, 1
-degrot=1
+# ctime = datetime.datetime(2021,9,14,13,13,36)
+# fname='/mnt/three/flowprofile/TEST-14Sep-2021-131336.avi'
+# setname = '14sep2'
+# sx, sy = 60, 80
+# dx, dy = 406, 253
+# degrot=1
 
+#ctime = datetime.datetime(2021,3,21,14,26,39)
+#setname = '21a'
+#fname = f'input/{setname}.avi'
+#sx, sy = 30, 40
+#dx, dy = 995, 385
+#degrot=-1.7
+
+ctime = datetime.datetime(2021,3,21,14,38,36)
+setname = '21b'
+fname = f'input/{setname}.avi'
+sx, sy = 21, 35
+dx, dy = 1105, 404
+degrot=0
+
+#ctime = datetime.datetime(2021,3,21,17,27,26)
+#setname = '21g'
+#fname = f'input/{setname}.avi'
+#sx, sy = 19, 28
+#dx, dy = 620, 276
+#degrot=-3
+
+
+#ctime = datetime.datetime(2021,3,21,17,14,51)
+#setname = '21f'
+#fname = f'input/{setname}.avi'
+#sx, sy = 17, 26
+#dx, dy = 619, 275
+#degrot=-2.4
+
+#ctime = datetime.datetime(2021,3,21,17,3,18)
+#setname = '21e'
+#fname = f'input/{setname}.avi'
+#sx, sy = 18, 28
+#dx, dy = 623, 276
+#degrot=-2.4
+
+#ctime = datetime.datetime(2021,3,21,16,40,22)
+#setname = '21d'
+#fname = f'input/{setname}.avi'
+#sx, sy = 20, 28
+#dx, dy = 633, 280
+#degrot=-2.7
+
+#ctime = datetime.datetime(2021,3,21,15,17,19)
+#setname = '21c'
+#fname = f'input/{setname}.avi'
+#sx, sy = 23, 36
+#dx, dy = 973, 417
+#degrot=-1.6
 
 outputfilename = f'./output/{setname}.csv'
 
@@ -74,8 +127,8 @@ d2_t = [d2_0, d2_1, d2_2, d2_3,d2_4,d2_5,d2_6,d2_7,d2_8,d2_9]
 # d1_t = []
 # d2_t = []
 
-with open(outputfilename, 'a') as f:
-    f.write('date,flow_v\n')
+# with open(outputfilename, 'a') as f:
+#     f.write('date,flow_v\n')
 
 clock_loc = [12,22,115,167]
 dig1 = [dy,dy+sy,dx,dx+sx]
@@ -147,18 +200,6 @@ while (cap.isOpened()):
     ### ###
     #tmp HACK some numbers do not display:
     di = np.argmin(np.array(res2))
-
-    #154042
-    # if di == 6:
-    #     di = 8
-    # if di == 5:
-    #     di = 7
-    # if id == 4:
-    #     di = 6
-    # if di == 3:
-    #     di = 4
-    # if di == 2:
-    #     di = 3
 
     flow_v = 10 * np.argmin(np.array(res1)) + di
 

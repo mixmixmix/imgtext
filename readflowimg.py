@@ -24,13 +24,42 @@ clock_loc = [12,22,115,167]
 #sx, sy = 60, 80
 #dx, dy = 471, 376
 #degrot=0
+"""
+frame = cv.imread('input/21a.png')
+sx, sy = 30, 40
+dx, dy = 995, 385
+degrot=-1.7
 
-ds=1
-frame = cv.imread('input/frame14_2.png')
-sx, sy = 60, 80
-dx, dy = 406, 253
-degrot=1
+frame = cv.imread('input/21b.png')
+sx, sy = 21, 35
+dx, dy = 1105, 404
+degrot=0
 
+frame = cv.imread('input/21g.png')
+sx, sy = 19, 28
+dx, dy = 620, 276
+degrot=-3
+
+frame = cv.imread('input/21f.png')
+sx, sy = 17, 26
+dx, dy = 619, 275
+degrot=-2.4
+
+frame = cv.imread('input/21e.png')
+sx, sy = 18, 28
+dx, dy = 623, 276
+degrot=-2.4
+
+frame = cv.imread('input/21d.png')
+sx, sy = 20, 28
+dx, dy = 633, 280
+degrot=-2.7
+
+frame = cv.imread('input/21c.png')
+sx, sy = 23, 36
+dx, dy = 973, 417
+degrot=-1.6
+"""
 dig1 = [dy,dy+sy,dx,dx+sx]
 dig2 = [dy,dy+sy,dx+sx,dx+2*sx]
 
@@ -56,11 +85,13 @@ frame_dig2 = rotated[dig2[0]:dig2[1],dig2[2]:dig2[3]]
 
 cv.namedWindow('current_frame')
 cv.namedWindow('current_dig1')
+cv.moveWindow('current_dig1', 120,120)
 cv.namedWindow('current_dig2')
-cv.namedWindow('current_clock')
+cv.moveWindow('current_dig2', 180,120)
+# cv.namedWindow('current_clock')
 
-# cv.setMouseCallback("current_frame", onmouse, param = None)
-# cv.imshow('current_frame',rotated)
+cv.setMouseCallback("current_frame", onmouse, param = None)
+cv.imshow('current_frame',rotated)
 # cv.imshow('current_clock',frame_clock)
 cv.imshow('current_dig1',frame_dig1)
 cv.imshow('current_dig2',frame_dig2)
