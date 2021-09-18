@@ -64,10 +64,14 @@ fcl.to_csv('input/switchcross.csv',index=False)
 
 alldf = dict()
 
+
 for ind, val in fcl.iterrows():
     #print(fval[ind])
     cti = fval_believe.loc[pd.date_range(start=(val['switch_time'] - datetime.timedelta(0,10)),end=(val['switch_time']+datetime.timedelta(0,150)), freq='1S')]
-    alldf[val['loc_name']]=cti
+
+    cttrue = cti.reset_index().apply(lambda x: -1*x['flow_v']*val['flow_dir'] if x['index'] < val['cross_time'] else x['flow_v']*val['flow_dir'],axis=1)
+
+    alldf[val['loc_name']]=cttrue
     # cti = flocs[ind]
     # print(cti)
 
