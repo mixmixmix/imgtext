@@ -1,0 +1,2 @@
+def xx():
+    cv.destroyAllWindows()

@@ -32,10 +32,10 @@ flocs = flocs.set_index(['datetime'])
 flocs = flocs.sort_index()
 
 
-fdl = pd.merge_asof(flocs, fdir, left_index=True, right_index=True, direction='nearest')
+fdl = pd.merge(flocs, fdir, on='loc_name', how='outer')
 
 #this will require manual corrections
-fdl[fdl['chid'].duplicated(keep=False)]
+# fdl[fdl['chid'].duplicated(keep=False)]
 fdl.to_csv('input/fdl.csv', index = False)
 
 # x = -1*fval_believe
@@ -46,10 +46,22 @@ fdl.to_csv('input/fdl.csv', index = False)
 # # plt.plot(np.zeros_like(x), "--", color="gray")
 # plt.show()
 
+fdl['fs']=fdl.apply(lambda x: 'low' if x['switch_time']< datetime.datetime(2021,5,21,14,38,36) else 'high', axis=1)
+
+vx = []
+for ind, val in fdl.iterrows():
+    if val['loc_x']<0:
+        vx.append(2.79+val['loc_x'])
+    else:
+        vx.append(val['loc_x'])
+
+fdl['loc_x'] = vx
+
+
 fcross = pd.read_csv('input/crosszero.csv')
 fcross['date'] = pd.to_datetime(fcross['date'])
 fcl = pd.merge_asof(fcross, fdl, left_on='date', right_on='switch_time', direction='backward')
-fcl.columns = ['cross_time', 'loc_name', 'loc_x','loc_y','flow_dir','chid','switch_time']
+fcl.columns = ['cross_time', 'loc_name', 'loc_x','loc_y','flow_dir','chid','switch_time','fs']
 fcl.to_csv('input/switchcross.csv',index=False)
 
 #TODO
@@ -74,6 +86,7 @@ for ind, val in fcl.iterrows():
     alldf[val['loc_name']]=cttrue
     # cti = flocs[ind]
     # print(cti)
+
 
 
 # same bottom middle point in gamma and beta
