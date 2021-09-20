@@ -101,4 +101,7 @@ myfl['asfractprev10'] = myfl.apply(lambda x: x['changeval']/x['stableprev'],axis
 
 myfl.to_csv('./input/results21.csv',index=False)
 
-sns.histplot(data=myfl, x='changeval',binwidth=1,kde=True);plt.show()
+sns.histplot(data=myfl, x='changeval',binwidth=1,kde=True)
+plt.show()
+sns.histplot(data=myfl, x='change5',binwidth=1,kde=True)
+plt.show()
