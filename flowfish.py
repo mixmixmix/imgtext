@@ -5,6 +5,19 @@ from scipy.signal import find_peaks
 import numpy as np
 import datetime
 
+def getCloser(fcl, xx, yy, fs, fdir):
+    mindist = 100
+    cloc = 'x'
+    for ind, val in fcl.iterrows():
+        if val['flow_dir'] == fdir and val['fs'] == fs:
+            dx = (val['loc_x']-xx)**2
+            dy = (val['loc_y']-yy)**2
+            dist = np.sqrt(dx+dy)
+            if dist < mindist:
+                mindist = dist
+                cloc = val['loc_name']
+    return cloc, mindist
+
 fval = pd.read_csv('input/flowvalchange.csv')
 fval['date'] = pd.to_datetime(fval['date'])
 
@@ -28,8 +41,12 @@ for ind, val in fcl.iterrows():
     # cti = flocs[ind]
 
 #read fishloc
-fish = pd.read_csv('input/reaction21.csv')
-fish['direction']=fish['direction'].replace({'Flow Counterclockwise (2)':-1, 'Flow Clockwise (1)':1})
+allfish = pd.read_csv('input/reactions_all.csv')
+allfish['direction']=allfish['direction'].replace({'0':-1, '1':1})
+allfish['direction']=allfish['direction'].replace({'Flow Counterclockwise (2)':-1, 'Flow Clockwise (1)':1})
+
+oldfish = allfish[(allfish['fs']=='old') | (allfish['fs']=='highold') ]
+fish = allfish[(allfish['fs']=='high') | (allfish['fs']=='low') ]
 
 
 fishloc = pd.read_csv('output/fishlocs.csv')
@@ -37,21 +54,10 @@ fishloc = pd.read_csv('output/fishlocs.csv')
 fishloc['loc_x']=fishloc.apply(lambda x: x['loc_x'] if x['loc_x']>=0 else x['loc_x']+2.79, axis =1)
 
 myf = fish[(fish['info']=='dir_change') | (fish['info']=='swim_off')]
+rejectmyf = fish[(fish['info']!='dir_change') & (fish['info']!='swim_off')]
 
 myfl = pd.merge(myf, fishloc, left_on='fishname', right_on='loc_name') # there are more locations than fish with criteria as some were deemed too unstable later on.
 
-def getCloser(fcl, xx, yy, fs, fdir):
-    mindist = 100
-    closesetloc = 'x'
-    for ind, val in fcl.iterrows():
-        if val['flow_dir'] == fdir and val['fs'] == fs:
-            dx = (val['loc_x']-xx)**2
-            dy = (val['loc_y']-yy)**2
-            dist = np.sqrt(dx+dy)
-            if dist < mindist:
-                mindist = dist
-                cloc = val['loc_name']
-    return cloc, mindist
 
 flocs = []
 fdist = []
@@ -63,45 +69,70 @@ for ind, val in myfl.iterrows():
 myfl['flocs']=flocs
 myfl['fdist']=fdist
 
-
-stableprev = []
-stablenext = []
-changeval = []
-stableprev_v = []
-stablenext_v = []
-changeval_v = []
+stable10prev_v = []
+stable10after_v = []
+change10_v = []
 change5 = []
+change1 = []
 change5_v = []
 
 #get average flow values fucking finally
 for ind, val in myfl.iterrows():
 
     cf = alldf[val['flocs']]
-    stableprev.append(abs(cf.iloc[0:10].mean()))
-    stablenext.append(abs(cf.iloc[-10:].mean()))
-    stableprev_v.append(cf.iloc[0:10].std())
-    stablenext_v.append(cf.iloc[-10:].std())
+    myfl.loc[ind,'stable10prev']=cf.iloc[0:10].mean()
+    myfl.loc[ind,'stable10after']=cf.iloc[-10:0].mean()
+    stable10prev_v.append(cf.iloc[0:10].std())
+    stable10after_v.append(cf.iloc[-10:].std())
     sreac = (datetime.datetime.strptime(val['tdiff'], '%H:%M:%S') - datetime.datetime(1900,1,1,0,0,0)).seconds
-    changeval.append(abs(cf.iloc[sreac-5:sreac+5].mean()))
-    changeval_v.append(cf.iloc[sreac-5:sreac+5].std())
-    change5.append(abs(cf.iloc[sreac-2:sreac+3].mean()))
+    myfl.loc[ind,'change10']=cf.iloc[sreac-5:sreac+5].mean()
+    change10_v.append(cf.iloc[sreac-5:sreac+5].std())
+    change5.append(cf.iloc[sreac-2:sreac+3].mean())
     change5_v.append(cf.iloc[sreac-2:sreac+3].std())
+    change1.append(cf.iloc[sreac-2:sreac+3].mean())
 
-myfl['stableprev']=stableprev
-myfl['stableprev_v']=stableprev_v
-myfl['stablenext']=stablenext
-myfl['stablenext_v']=stablenext_v
-myfl['changeval']=changeval
-myfl['changeval_v']=changeval_v
+myfl['stable10prev_v']=stable10prev_v
+myfl['stable10next_v']=stable10after_v
+myfl['change10_v']=change10_v
 myfl['change5']=change5
 myfl['change5_v']=change5_v
+myfl['change1']=change1
 
-myfl['asfractprev5'] = myfl.apply(lambda x: x['change5']/x['stableprev'],axis=1)
-myfl['asfractprev10'] = myfl.apply(lambda x: x['changeval']/x['stableprev'],axis=1)
+myfl['asfractprev5'] = myfl.apply(lambda x: x['change5']/x['stable10prev'],axis=1)
+myfl['asfractprev10'] = myfl.apply(lambda x: x['change10']/x['stable10prev'],axis=1)
 
 myfl.to_csv('./input/results21.csv',index=False)
 
-sns.histplot(data=myfl, x='changeval',binwidth=1,kde=True)
+
+## read in data from the first experiment
+
+finres = pd.concat([rejectmyf,oldfish,myfl])
+
+
+
+finres['tdiff'] = finres['tdiff'].astype(str)
+finres['tsec'] = finres.apply(lambda x: (datetime.datetime.strptime(x['tdiff'], '%H:%M:%S') - datetime.datetime(1900,1,1,0,0,0)).seconds if len(x['tdiff'])==8 else np.nan, axis = 1)
+
+
+finres['abs1']=abs(finres['change1'])
+finres['abs5']=abs(finres['change5'])
+finres['abs10']=abs(finres['change10'])
+
+finres['fsdir'] = finres.apply(lambda x: x['fs']+str(x['direction']), axis = 1)
+
+finres.to_csv('./input/finres.csv',index=False)
+
+sns.histplot(data=finres, x='tsec', hue = 'fsdir',binwidth=10,kde=True)
 plt.show()
-sns.histplot(data=myfl, x='change5',binwidth=1,kde=True)
+
+sns.histplot(data=finres, x='abs1', hue = 'fsdir' ,binwidth=1,kde=True)
+plt.show()
+
+sns.histplot(data=finres, x='abs10', hue = 'fsdir' ,binwidth=1,kde=True)
+plt.show()
+
+sns.histplot(data=finres, x='abs5', hue = 'fsdir' ,binwidth=1,kde=True)
+plt.show()
+
+sns.countplot(data=finres, x='info', hue = 'fsdir' )
 plt.show()
