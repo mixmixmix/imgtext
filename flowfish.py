@@ -45,6 +45,9 @@ allfish = pd.read_csv('input/reactions_all.csv')
 allfish['direction']=allfish['direction'].replace({'0':-1, '1':1})
 allfish['direction']=allfish['direction'].replace({'Flow Counterclockwise (2)':-1, 'Flow Clockwise (1)':1})
 
+allfish['fishtype'] = allfish.apply(lambda x: 'wild' if int(x.name) >= 113 else ('farmed_in' if x['fs']=='old' else 'farmed_loch'), axis=1)
+
+
 oldfish = allfish[(allfish['fs']=='old') | (allfish['fs']=='highold') ]
 fish = allfish[(allfish['fs']=='high') | (allfish['fs']=='low') ]
 
