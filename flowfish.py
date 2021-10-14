@@ -49,7 +49,10 @@ for ind, val in fcl.iterrows():
     fcl.loc[ind,'10prev_v']=cf.iloc[0:10].std()
     fcl.loc[ind,'10after_v']=cf.iloc[-10:-1].std()
 
+fcl['xcm']=fcl.apply(lambda x: x['loc_x']*60, axis=1)
+fcl['ycm']=fcl.apply(lambda x: x['loc_y']*60, axis=1)
 
+fcl[['loc_name','xcm','ycm','fs','10prev','10after','10prev_v','10after_v']].drop_duplicates().to_csv('./output/locval.csv',index=False)
 
 #read fishloc
 allfish = pd.read_csv('input/reactions_all.csv')
