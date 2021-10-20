@@ -61,12 +61,20 @@ def mkMatchTemplate(img1, img2):
 #dx, dy = 995, 385
 #degrot=-1.7
 
-ctime = datetime.datetime(2021,3,21,14,38,36)
-setname = '21b'
+#ctime = datetime.datetime(2021,3,21,14,38,36)
+#setname = '21b'
+#fname = f'input/{setname}.avi'
+#sx, sy = 21, 35
+#dx, dy = 1105, 404
+#degrot=0
+
+
+ctime = datetime.datetime(2021,10,14,12,00,58)
+setname = '5oct'
 fname = f'input/{setname}.avi'
-sx, sy = 21, 35
-dx, dy = 1105, 404
-degrot=0
+sx, sy = 60, 80
+dx, dy = 630, 402
+degrot=-1.6
 
 #ctime = datetime.datetime(2021,3,21,17,27,26)
 #setname = '21g'

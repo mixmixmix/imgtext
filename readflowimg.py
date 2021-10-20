@@ -60,6 +60,13 @@ sx, sy = 23, 36
 dx, dy = 973, 417
 degrot=-1.6
 """
+
+frame = cv.imread('input/5oct.png')
+sx, sy = 60, 80
+dx, dy = 630, 402
+degrot=-1.6
+
+
 dig1 = [dy,dy+sy,dx,dx+sx]
 dig2 = [dy,dy+sy,dx+sx,dx+2*sx]
 
