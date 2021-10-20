@@ -40,6 +40,20 @@ for ind, val in fcl.iterrows():
     alldf[val['loc_name']]=cttrue
     # cti = flocs[ind]
 
+##ADD FLOW VALUES AT LOCATIONS
+for ind, val in fcl.iterrows():
+
+    cf = alldf[val['loc_name']]
+    fcl.loc[ind,'10prev']=cf.iloc[0:10].mean()
+    fcl.loc[ind,'10after']=cf.iloc[-10:-1].mean()
+    fcl.loc[ind,'10prev_v']=cf.iloc[0:10].std()
+    fcl.loc[ind,'10after_v']=cf.iloc[-10:-1].std()
+
+fcl['xcm']=fcl.apply(lambda x: x['loc_x']*60, axis=1)
+fcl['ycm']=fcl.apply(lambda x: x['loc_y']*60, axis=1)
+
+fcl[['loc_name','xcm','ycm','fs','10prev','10after','10prev_v','10after_v']].drop_duplicates().to_csv('./output/locval.csv',index=False)
+
 #read fishloc
 allfish = pd.read_csv('input/reactions_all.csv')
 allfish['direction']=allfish['direction'].replace({'0':-1, '1':1})
@@ -84,7 +98,7 @@ for ind, val in myfl.iterrows():
 
     cf = alldf[val['flocs']]
     myfl.loc[ind,'stable10prev']=cf.iloc[0:10].mean()
-    myfl.loc[ind,'stable10after']=cf.iloc[-10:0].mean()
+    myfl.loc[ind,'stable10after']=cf.iloc[-10:].mean()
     stable10prev_v.append(cf.iloc[0:10].std())
     stable10after_v.append(cf.iloc[-10:].std())
     sreac = (datetime.datetime.strptime(val['tdiff'], '%H:%M:%S') - datetime.datetime(1900,1,1,0,0,0)).seconds
