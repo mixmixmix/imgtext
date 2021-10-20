@@ -43,7 +43,8 @@ def onmouse(event, x, y, flags, param):
 
 
 # outputfilename = './output/newlocs.csv'
-outputfilename = './output/fishlocs.csv'
+# outputfilename = './output/fishlocs.csv'
+outputfilename = './output/5octlocs.csv'
 
 with open(outputfilename, 'a') as f:
     f.write('loc_name,loc_x,loc_y,\n')
@@ -52,7 +53,8 @@ cv.namedWindow('current_frame', cv.WINDOW_GUI_EXPANDED)
 cv.moveWindow('current_frame', 120,120)
 
 # files = glob.glob('input/fmeter_locs/*png')
-files = glob.glob('input/fishloc/*png')
+#files = glob.glob('input/fishloc/*png')
+files = glob.glob('input/fmeter5oct/*png')
 
 for fname in files:
     mode_arrange = True

@@ -52,7 +52,7 @@ oldfish = allfish[(allfish['fs']=='old') | (allfish['fs']=='highold') ]
 fish = allfish[(allfish['fs']=='high') | (allfish['fs']=='low') ]
 
 
-fishloc = pd.read_csv('output/fishlocs.csv')
+fishloc = pd.read_csv('input/fishlocs.csv')
 
 fishloc['loc_x']=fishloc.apply(lambda x: x['loc_x'] if x['loc_x']>=0 else x['loc_x']+2.79, axis =1)
 
@@ -104,7 +104,7 @@ myfl['change1']=change1
 myfl['asfractprev5'] = myfl.apply(lambda x: x['change5']/x['stable10prev'],axis=1)
 myfl['asfractprev10'] = myfl.apply(lambda x: x['change10']/x['stable10prev'],axis=1)
 
-myfl.to_csv('./input/results21.csv',index=False)
+myfl.to_csv('./input/results21oct.csv',index=False)
 
 
 ## read in data from the first experiment
@@ -123,7 +123,7 @@ finres['abs10']=abs(finres['change10'])
 
 finres['fsdir'] = finres.apply(lambda x: x['fs']+str(x['direction']), axis = 1)
 
-finres.to_csv('./input/finres.csv',index=False)
+finres.to_csv('./input/finresoct.csv',index=False)
 
 sns.histplot(data=finres, x='tsec', hue = 'fsdir',binwidth=10,kde=True)
 plt.show()

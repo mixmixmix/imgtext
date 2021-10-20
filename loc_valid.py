@@ -54,7 +54,7 @@ def onmouse(event, x, y, flags, param):
 
         cv.circle(frame,(lx,ly), 5, (0,0,255), 1)
 
-inputfilename = './input/flowmeterlocs21.csv'
+inputfilename = './input/flowmeterlocs_oct5.csv'
 
 flocs = pd.read_csv(inputfilename)
 
