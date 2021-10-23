@@ -14,3 +14,20 @@ summary(modelflowstrenght)
 boxplot(fishes$fdist ~ fishes$fs)
 
 boxplot(fishes$tsec ~ fishes$fs)
+
+
+issuc <- function(x) {
+  if (x == 'dir_change') {
+    1
+  } else {
+    0
+  }
+}
+
+
+#remove experimental error etc.
+
+fishes$binres <- sapply(fishes$info, issuc)
+
+modelresp1 <- glm(binres ~ fishtype,fishes,family='binomial')
+summary(modelresp1)
