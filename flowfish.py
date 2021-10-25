@@ -145,7 +145,16 @@ finres['abs1']=abs(finres['change1'])
 finres['abs5']=abs(finres['change5'])
 finres['abs10']=abs(finres['change10'])
 
-finres['fsdir'] = finres.apply(lambda x: x['fs']+str(x['direction']), axis = 1)
+finres['direction']=finres['direction'].replace({1:'clock', -1:'counter'})
+
+finres['fsdir'] = finres.apply(lambda x: x['fs']+'_'+str(x['direction']), axis = 1)
+
+finres['absstable10']=abs(finres['stable10prev'])
+finres['absstable10_v']=abs(finres['stable10prev_v'])
+
+finres['fdistcm'] = 0.6 * finres['fdist']
+
+
 
 finres.to_csv('./input/finresoct.csv',index=False)
 
