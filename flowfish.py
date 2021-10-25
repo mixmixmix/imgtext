@@ -148,16 +148,17 @@ finres['abs10']=abs(finres['change10'])
 finres['direction']=finres['direction'].replace({1:'clock', -1:'counter'})
 
 finres['fsdir'] = finres.apply(lambda x: x['fs']+'_'+str(x['direction']), axis = 1)
+finres['success'] = finres.apply(lambda x: 1 if x['info']=='dir_change' else 0, axis = 1)
 
 finres['absstable10']=abs(finres['stable10prev'])
 finres['absstable10_v']=abs(finres['stable10prev_v'])
 
-finres['fdistcm'] = 0.6 * finres['fdist']
+finres['fdistcm'] = 60 * finres['fdist']
 
 
 
 finres.to_csv('./input/finresoct.csv',index=False)
-
+print('done')
 # sns.histplot(data=finres, x='tsec', hue = 'fsdir',binwidth=10,kde=True)
 # plt.show()
 
